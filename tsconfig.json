@@ -1,34 +1,25 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
+    "target": "es5", // 設置 ECMAScript 目標版本
+    "lib": ["dom", "dom.iterable", "esnext"], // 使用的庫
+    "allowJs": true, // 允許編譯 JavaScript 文件
+    "skipLibCheck": true, // 跳過對庫文件的類型檢查
+    "esModuleInterop": true, // 啟用 ES 模塊互操作性
+    "allowSyntheticDefaultImports": true, // 允許合成默認導入
+    "strict": true, // 啟用所有嚴格的類型檢查選項
+    "forceConsistentCasingInFileNames": true, // 強制檔案名大小寫一致
+    "noEmit": true, // 不產生輸出文件
+    "jsx": "react", // 設置 JSX 的編譯方式
+    "module": "esnext", // 設置模塊系統
+    "moduleResolution": "node", // 設置模塊解析策略
+    "resolveJsonModule": true, // 允許導入 JSON 文件
+    "isolatedModules": true, // 啟用每個文件作為獨立模塊
+    "noFallthroughCasesInSwitch": true, // 堵住 switch 的 fallthrough
+    "baseUrl": "./src", // 設置基礎路徑
     "paths": {
-      "@/*": ["*"]
-    },
-    "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    // "strict": true,
-    "strict": false,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "jsx": "react",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noFallthroughCasesInSwitch": true
-  },
-  "include": ["src/**/*"],
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.node.json"
+      "@/*": ["*"] // 路徑映射
     }
-  ]
+  },
+  "include": ["src/**/*"], // 包含的文件
+  "exclude": ["node_modules", "dist"] // 排除的文件
 }
