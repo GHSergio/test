@@ -1,8 +1,17 @@
-# React + Vite
+# MovieList 重構專案
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 專案目的
 
-Currently, two official plugins are available:
+跟 react-ts-practice 是一樣的內容,
+但由於嘗試佈署 vercel 一直失敗,
+用此專案一步一步複製測試是成功的,
+所以是用這個專案顯示佈署,
+但 commit 紀錄都是在 react-ts-practice
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Links
+
+- Live Site URL: [前往佈署網址](https://test-orpin-gamma.vercel.app/)
+
+## Author
+
+Github - [Ming Hsu](https://github.com/GHSergio)
