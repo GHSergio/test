@@ -1,15 +1,15 @@
 //APP.tsx
-// import { ThemeProviderComponent } from "./contexts/ThemeContext";
-// import { MovieProvider } from "./contexts/MovieContext";
+import { ThemeProviderComponent } from "./contexts/ThemeContext";
+import { MovieProvider } from "./contexts/MovieContext";
 import Main from "./Main";
 
 function App() {
   return (
-    // <ThemeProviderComponent>
-    // <MovieProvider>
-    <Main />
-    // </MovieProvider>
-    // </ThemeProviderComponent>
+    <ThemeProviderComponent>
+      <MovieProvider>
+        <Main />
+      </MovieProvider>
+    </ThemeProviderComponent>
   );
 }
 
