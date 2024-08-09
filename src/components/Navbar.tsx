@@ -40,6 +40,16 @@ const Navbar: React.FC = () => {
     setAnchorEl(null);
   }, []);
 
+  const handleToggleToMovieList = useCallback(() => {
+    setCurrentPage("menu");
+    setAnchorEl(null);
+  }, [setCurrentPage]);
+
+  const handleToggleToFavoriteList = useCallback(() => {
+    setCurrentPage("favorite");
+    setAnchorEl(null);
+  }, [setCurrentPage]);
+
   return (
     <AppBar position="static">
       <Toolbar>
@@ -85,7 +95,7 @@ const Navbar: React.FC = () => {
                   },
                 }}
               >
-                <MenuItem onClick={handleMenuClose}>MovieList</MenuItem>
+                <MenuItem onClick={handleToggleToMovieList}>MovieList</MenuItem>
               </Tooltip>
               <Tooltip
                 title={"切換至收藏清單"}
@@ -99,7 +109,9 @@ const Navbar: React.FC = () => {
                   },
                 }}
               >
-                <MenuItem onClick={handleMenuClose}>Favorite</MenuItem>
+                <MenuItem onClick={handleToggleToFavoriteList}>
+                  Favorite
+                </MenuItem>
               </Tooltip>
             </Menu>
             {/* 中間顯示的應用標題和圖標 */}
