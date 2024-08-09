@@ -1,26 +1,30 @@
 import React from "react";
-import {
-  Grid,
-  TextField,
-  IconButton,
-  useTheme,
-  useMediaQuery,
-  Tooltip,
-} from "@mui/material";
+import { Grid, TextField, IconButton, Tooltip } from "@mui/material";
 import ViewModuleIcon from "@mui/icons-material/ViewModule";
 import ViewListIcon from "@mui/icons-material/ViewList";
 import { useMovie } from "../contexts/useMovie";
+import { debounce } from "lodash";
 
 const SearchBar: React.FC = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const {
+    viewMode,
+    setViewMode,
+    searchKeyword,
+    setSearchKeyword,
+    setPaginationPage,
+    isSmallScreen,
+  } = useMovie();
 
-  //從Movie Context 提取 setViewMode
-  const { viewMode, setViewMode, searchKeyword, setSearchKeyword } = useMovie();
+  //減少頁碼更新的頻率
+  const debouncedPageChange = debounce(() => {
+    setPaginationPage(1);
+  }, 100);
 
   // 將 keyword 更新到 state
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchKeyword(event.target.value);
+    const value = event.target.value;
+    setSearchKeyword(value); // 立即更新搜尋關鍵字
+    debouncedPageChange(); // 延遲更新頁碼
   };
 
   return (
@@ -28,10 +32,10 @@ const SearchBar: React.FC = () => {
       <Grid
         item
         container
-        direction={isMobile ? "column" : "row"}
+        direction={isSmallScreen ? "column" : "row"}
         spacing={1}
         alignItems="center"
-        xs={isMobile ? 12 : true}
+        xs={isSmallScreen ? 12 : true}
         marginX={"10px"}
       >
         {/* 搜尋框 */}
@@ -49,10 +53,10 @@ const SearchBar: React.FC = () => {
         >
           <Grid
             item
-            xs={isMobile ? 12 : true}
+            xs={isSmallScreen ? 12 : true}
             style={{
-              flex: isMobile ? "none" : "0 0 auto",
-              minWidth: isMobile ? "100%" : "250px",
+              flex: isSmallScreen ? "none" : "0 0 auto",
+              minWidth: isSmallScreen ? "100%" : "250px",
             }}
           >
             <TextField
@@ -69,7 +73,7 @@ const SearchBar: React.FC = () => {
       {/* 排列模式切換按鈕 */}
       <Grid
         item
-        style={{ textAlign: isMobile ? "center" : "right", flexShrink: 1 }}
+        style={{ textAlign: isSmallScreen ? "center" : "right", flexShrink: 1 }}
       >
         <Tooltip
           title={"切換至卡片模式"}

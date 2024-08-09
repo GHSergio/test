@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   List,
   ListItem,
@@ -10,7 +10,6 @@ import {
   Tooltip,
   Typography,
   useTheme,
-  useMediaQuery,
   Box,
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -32,16 +31,13 @@ const PosterList: React.FC<PosterListProps> = ({
   onMoreClick,
   onIconClick,
 }) => {
-  const { favoriteList, currentPage } = useMovie();
+  const { favoriteList, currentPage, isSmallScreen } = useMovie();
   const theme = useTheme();
 
   // 是否在收藏內
-  const isFavorite = (id: number) => {
+  const isFavorite = useMemo(() => {
     return favoriteList.some((favorite) => favorite.id === id);
-  };
-
-  // 小螢幕時
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  }, [favoriteList, id]);
 
   return (
     <List
@@ -175,7 +171,7 @@ const PosterList: React.FC<PosterListProps> = ({
               >
                 {currentPage === "menu" ? (
                   <FavoriteIcon
-                    style={{ color: isFavorite(id) ? "red" : "inherit" }}
+                    style={{ color: isFavorite ? "red" : "inherit" }}
                     sx={{
                       transform: isSmallScreen ? "scale(0.8)" : "scale(1)",
                     }}

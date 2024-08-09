@@ -39,6 +39,12 @@ interface CustomPaletteOptions extends PaletteOptions {
   mode: PaletteMode;
 }
 
+//主題相同的部分
+const commonCustomPalette = {
+  buttonHover: "#00cc76",
+  inputBackground: "#CCFFF2",
+};
+
 const lightPalette: CustomPaletteOptions = {
   mode: "light",
   primary: {
@@ -55,11 +61,10 @@ const lightPalette: CustomPaletteOptions = {
     primary: "#000000",
   },
   custom: {
+    ...commonCustomPalette,
     textColor: "#000000",
     buttonTextColor: "001a00",
     buttonBackgroundColor: "#c2f386",
-    buttonHover: "#00cc76",
-    inputBackground: "#CCFFF2",
     inputTextColor: "#CCFFF2",
     cardBackground: "#00EAFF",
     boxShadow: "0 0 5px 2px rgba(0,0,0,0.3)",
@@ -84,16 +89,15 @@ const darkPalette: CustomPaletteOptions = {
     primary: "#32FFFF",
   },
   custom: {
+    ...commonCustomPalette,
     textColor: "#e9ffff",
     buttonTextColor: "#5f1f00",
     buttonBackgroundColor: "#db6449",
-    buttonHover: "#00cc76",
-    inputBackground: "#CCFFF2",
     inputTextColor: "#000000",
     cardBackground: "#009898",
     deleteIcon: "#571d53",
     buttonActive: "#3abe5e",
-    // boxShadow: "0 0 5px 2px rgba(200,200,200,0.3)",
+    boxShadow: "",
   },
 };
 

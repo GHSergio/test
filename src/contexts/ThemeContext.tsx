@@ -1,5 +1,11 @@
 // ThemeContext.tsx
-import React, { createContext, useState, useMemo, ReactNode } from "react";
+import React, {
+  createContext,
+  useState,
+  useMemo,
+  ReactNode,
+  useCallback,
+} from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { lightTheme, darkTheme } from "../components/Theme";
@@ -26,9 +32,9 @@ export const ThemeProviderComponent: React.FC<{ children: ReactNode }> = ({
   const [mode, setMode] = useState<ThemeMode>("light");
 
   //切換主題fn
-  const toggleTheme = () => {
+  const toggleTheme = useCallback(() => {
     setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
-  };
+  }, []);
 
   //useMemo用來記憶化 theme 的計算結果，僅當 mode 改變時才重新計算主題，優化性能。
   const theme = useMemo(

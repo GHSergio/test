@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   AppBar,
   Toolbar,
   Typography,
   IconButton,
   Button,
-  useMediaQuery,
   Menu,
   MenuItem,
   Tooltip,
@@ -23,26 +22,28 @@ import { useMovie } from "../contexts/useMovie";
 const Navbar: React.FC = () => {
   // 使用自定義的主題上下文，獲取當前模式和切換主題的函數
   const { mode, toggleTheme } = useThemeContext();
-  // 使用媒體查詢來檢查螢幕寬度是否小於720px
-  const isMobile = useMediaQuery("(max-width:720px)");
+
   // 用於控制菜單打開的狀態
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const { setCurrentPage, currentPage } = useMovie();
+  const { setCurrentPage, currentPage, isSmallScreen } = useMovie();
   const theme = useTheme();
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const handleMenuOpen = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      setAnchorEl(event.currentTarget);
+    },
+    []
+  );
 
-  const handleMenuClose = () => {
+  const handleMenuClose = useCallback(() => {
     setAnchorEl(null);
-  };
+  }, []);
 
   return (
     <AppBar position="static">
       <Toolbar>
-        {isMobile ? (
+        {isSmallScreen ? (
           <>
             {/* 漢堡菜單按鈕，在小螢幕下顯示 */}
             <Tooltip

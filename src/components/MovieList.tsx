@@ -1,17 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import PosterCard from "../components/PosterCard";
 import PosterList from "../components/PosterList";
 import { useMovie } from "../contexts/useMovie";
-import {
-  Box,
-  useTheme,
-  useMediaQuery,
-  Pagination,
-  Typography,
-  Alert,
-} from "@mui/material";
+import { Box, Pagination, Typography, Alert } from "@mui/material";
 import MovieModal from "./MovieModal";
-import ScrollToTopButton from "./ScrollToTopButton";
 
 const MovieList: React.FC = () => {
   const {
@@ -31,42 +23,22 @@ const MovieList: React.FC = () => {
     filterMovies,
     alert,
     setAlert,
+    getGridTemplateColumns,
+    isSmallScreen,
   } = useMovie();
-  const theme = useTheme();
 
-  // 使用 useMediaQuery 來設置不同斷點的樣式
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
-  const isLargeScreen = useMediaQuery(theme.breakpoints.up("xl"));
-
-  // console.log("接收到的電影清單:", movies);
-  // console.log("keyword:", searchKeyword);
-
-  // 設置不同 breakPoint 排版
-  const getGridTemplateColumns = () => {
-    if (isSmallScreen) {
-      return "repeat(auto-fit, minmax(300px, 1fr))";
-    }
-    if (isMediumScreen) {
-      return "repeat(auto-fit, minmax(500px, 1fr))";
-    }
-    if (isLargeScreen) {
-      return "repeat(auto-fit, minmax(600px, 1fr))";
-    }
-    return "repeat(auto-fit, minmax(600px, 1fr))";
-  };
-
+  // 使用 useMemo 來優化 依賴於其他 狀態 的計算
   //電影過濾
-  const filteredMovies = filterMovies(movies, searchKeyword);
-  // console.log("過濾後的電影清單:", filteredMovies);
+  const filteredMovies = useMemo(
+    () => filterMovies(movies, searchKeyword),
+    [movies, searchKeyword, filterMovies]
+  );
 
   //電影分頁
-  const paginatedMovies = paginateMovies(
-    filteredMovies,
-    paginationPage,
-    moviesPerPage
+  const paginatedMovies = useMemo(
+    () => paginateMovies(filteredMovies, paginationPage, moviesPerPage),
+    [filteredMovies, paginationPage, moviesPerPage, paginateMovies]
   );
-  // console.log("電影分頁:", paginatedMovies);
 
   //alert 1秒後 自動消失
   useEffect(() => {
@@ -101,7 +73,6 @@ const MovieList: React.FC = () => {
           </Alert>
         </Box>
       )}
-
       {filteredMovies.length === 0 ? (
         <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
           <Typography variant="h6">此關鍵字，查無相關搜尋結果！</Typography>
@@ -159,10 +130,7 @@ const MovieList: React.FC = () => {
           color="primary"
         />
       </Box>
-
-      {/* 返回頂部按鈕 */}
-      <ScrollToTopButton />
-
+      {/* Modal */}
       {selectedMovie && (
         <MovieModal
           open={modalOpen}

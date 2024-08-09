@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -9,7 +9,6 @@ import {
   Divider,
   Tooltip,
   useTheme,
-  useMediaQuery,
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -30,18 +29,14 @@ const PosterCard: React.FC<PosterCardProps> = ({
   onMoreClick,
   onIconClick,
 }) => {
-  const { favoriteList, currentPage } = useMovie();
+  const { favoriteList, currentPage, isSmallScreen } = useMovie();
   const theme = useTheme();
 
   // 是否在收藏內
-  const isFavorite = (id: number) => {
+  const isFavorite = useMemo(() => {
     return favoriteList.some((favorite) => favorite.id === id);
-  };
+  }, [favoriteList, id]);
 
-  // 小螢幕時
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
-  // 根據 viewMode 渲染不同的樣式
   return (
     <Card
       sx={{
@@ -166,7 +161,7 @@ const PosterCard: React.FC<PosterCardProps> = ({
           >
             {currentPage === "menu" ? (
               <FavoriteIcon
-                style={{ color: isFavorite(id) ? "red" : "inherit" }}
+                style={{ color: isFavorite ? "red" : "inherit" }}
                 sx={{
                   color: theme.palette.custom.deleteIcon,
                   transform: isSmallScreen ? "scale(0.6)" : "scale(1)",

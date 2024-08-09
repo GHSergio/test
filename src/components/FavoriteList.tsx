@@ -1,17 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import PosterCard from "../components/PosterCard";
 import PosterList from "../components/PosterList";
 import { useMovie } from "../contexts/useMovie";
-import {
-  Box,
-  useTheme,
-  useMediaQuery,
-  Pagination,
-  Typography,
-  Alert,
-} from "@mui/material";
+import { Box, Pagination, Typography, Alert } from "@mui/material";
 import MovieModal from "./MovieModal";
-const MovieList: React.FC = () => {
+const FavoriteList: React.FC = () => {
   const {
     viewMode,
     POSTER_URL,
@@ -29,37 +22,19 @@ const MovieList: React.FC = () => {
     removeFromFavorite,
     alert,
     setAlert,
+    getGridTemplateColumns,
+    isSmallScreen,
   } = useMovie();
-  const theme = useTheme();
-
-  // 使用 useMediaQuery 來設置不同斷點的樣式
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
-  const isLargeScreen = useMediaQuery(theme.breakpoints.up("xl"));
-
-  console.log("接收到的收藏清單:", favoriteList);
-
-  // 設置不同 breakPoint 排版
-  const getGridTemplateColumns = () => {
-    if (isSmallScreen) {
-      return "repeat(auto-fit, minmax(300px, 1fr))";
-    }
-    if (isMediumScreen) {
-      return "repeat(auto-fit, minmax(500px, 1fr))";
-    }
-    if (isLargeScreen) {
-      return "repeat(auto-fit, minmax(600px, 1fr))";
-    }
-    return "repeat(auto-fit, minmax(600px, 1fr))";
-  };
 
   //電影過濾
-  const filteredMovies = filterMovies(favoriteList, searchKeyword);
+  const filteredMovies = useMemo(
+    () => filterMovies(favoriteList, searchKeyword),
+    [filterMovies, favoriteList, searchKeyword]
+  );
   //電影分頁
-  const paginatedMovies = paginateMovies(
-    filteredMovies,
-    paginationPage,
-    moviesPerPage
+  const paginatedMovies = useMemo(
+    () => paginateMovies(filteredMovies, paginationPage, moviesPerPage),
+    [paginateMovies, filteredMovies, paginationPage, moviesPerPage]
   );
 
   //alert 1秒後 自動消失
@@ -163,4 +138,4 @@ const MovieList: React.FC = () => {
   );
 };
 
-export default MovieList;
+export default FavoriteList;

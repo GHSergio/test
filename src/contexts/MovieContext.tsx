@@ -1,4 +1,11 @@
-import React, { createContext, useState, useEffect, ReactNode } from "react";
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useCallback,
+  useMemo,
+} from "react";
 import axios from "axios";
 import { useTheme, useMediaQuery } from "@mui/material";
 
@@ -51,6 +58,8 @@ export interface MovieContextProps {
       message: string;
     } | null
   ) => void;
+  getGridTemplateColumns: () => string;
+  isSmallScreen: boolean;
 }
 
 const BASE_URL = `https://webdev.alphacamp.io`;
@@ -81,88 +90,108 @@ export const MovieProvider: React.FC<{ children: ReactNode }> = ({
   //定義 breakpoint
   const theme = useTheme();
 
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("xs"));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const isMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
   const isLargeScreen = useMediaQuery(theme.breakpoints.down("lg"));
   const isExtraLargeScreen = useMediaQuery(theme.breakpoints.down("xl"));
 
   //每頁顯示movie筆數
-  let moviesPerPage;
-  if (isSmallScreen) {
-    moviesPerPage = 4;
-  } else if (isMediumScreen) {
-    moviesPerPage = 8;
-  } else if (isLargeScreen) {
-    moviesPerPage = 12;
-  } else if (isExtraLargeScreen) {
-    moviesPerPage = 16;
-  } else {
-    moviesPerPage = 21;
-  }
+  const moviesPerPage = useMemo(() => {
+    if (isSmallScreen) return 4;
+    if (isMediumScreen) return 8;
+    if (isLargeScreen) return 12;
+    if (isExtraLargeScreen) return 16;
+    return 21;
+  }, [isSmallScreen, isMediumScreen, isLargeScreen, isExtraLargeScreen]);
+
+  // 使用 useMediaQuery 來設置不同斷點的樣式
+  const getGridTemplateColumns = useCallback(() => {
+    if (isSmallScreen) {
+      return "repeat(auto-fit, minmax(300px, 1fr))";
+    }
+    if (isMediumScreen) {
+      return "repeat(auto-fit, minmax(500px, 1fr))";
+    }
+    if (isLargeScreen) {
+      return "repeat(auto-fit, minmax(500px, 1fr))";
+    }
+    if (isExtraLargeScreen) {
+      return "repeat(auto-fit, minmax(600px, 1fr))";
+    }
+    return "repeat(auto-fit, minmax(800px, 1fr))";
+  }, [isSmallScreen, isMediumScreen, isLargeScreen, isExtraLargeScreen]);
 
   //從傳入的movies篩選出title包含keyword的item
-  const filterMovies = (movies: Movie[], keyword: string): Movie[] => {
-    if (!keyword) {
-      return movies;
-    }
-    return movies.filter((movie) =>
-      movie.title.toLowerCase().includes(keyword.toLowerCase())
-    );
-  };
+  const filterMovies = useCallback(
+    (movies: Movie[], keyword: string): Movie[] => {
+      if (!keyword) {
+        return movies;
+      }
+      return movies.filter((movie) =>
+        movie.title.toLowerCase().includes(keyword.toLowerCase())
+      );
+    },
+    []
+  );
 
   //將傳入的movies分頁
-  const paginateMovies = (
-    movies: Movie[],
-    page: number,
-    perPage: number
-  ): Movie[] => {
-    //每頁從哪筆data開始
-    const startIndex = (page - 1) * perPage;
-    //回傳startIndex ~ startIndex + moviesPerPage 筆 data
-    return movies.slice(startIndex, startIndex + perPage);
-  };
+  const paginateMovies = useCallback(
+    (movies: Movie[], page: number, perPage: number): Movie[] => {
+      const startIndex = (page - 1) * perPage;
+      return movies.slice(startIndex, startIndex + perPage);
+    },
+    []
+  );
 
   //處理換頁
-  const handlePageChange = (
-    // event: React.ChangeEvent<unknown>, // 事件對象參數
-    // TS不使用就改成這樣,是故意不使用的 避免錯誤
-    _: React.ChangeEvent<unknown>, // 事件對象參數
-    value: number // 新的頁碼值參數
-  ) => {
-    setPaginationPage(value);
-  };
+  const handlePageChange = useCallback(
+    (
+      // 表示是故意不使用的 避免TS錯誤
+      _: React.ChangeEvent<unknown>, // 事件對象參數
+      value: number // 新的頁碼值參數
+    ) => {
+      setPaginationPage(value);
+    },
+    []
+  );
 
   //顯示 Movie detail
-  const handleMoreClick = (movieId: number) => {
-    const selectedMovie = movies.find((movie) => movie.id === movieId);
-    if (selectedMovie) {
-      setSelectedMovie(selectedMovie);
-      setModalOpen(true);
-    }
-  };
+  const handleMoreClick = useCallback(
+    (movieId: number) => {
+      const selectedMovie = movies.find((movie) => movie.id === movieId);
+      if (selectedMovie) {
+        setSelectedMovie(selectedMovie);
+        setModalOpen(true);
+      }
+    },
+    [movies]
+  );
 
   //添加該movie到FavoriteList
-  const addToFavorite = (movieId: number) => {
-    const selectedMovie = movies.find((movie) => movie.id === movieId);
-    if (selectedMovie && !favoriteList.some((fav) => fav.id === movieId)) {
-      setFavoriteList((prev) => [...prev, selectedMovie]);
-      setAlert({ severity: "success", message: "已添加到收藏清單！" });
-    } else {
-      setAlert({ severity: "warning", message: "該電影已在收藏清單內！" });
-    }
-  };
+  const addToFavorite = useCallback(
+    (movieId: number) => {
+      const selectedMovie = movies.find((movie) => movie.id === movieId);
+      if (selectedMovie && !favoriteList.some((fav) => fav.id === movieId)) {
+        setFavoriteList((prev) => [...prev, selectedMovie]);
+        setAlert({ severity: "success", message: "已添加到收藏清單！" });
+      } else {
+        setAlert({ severity: "warning", message: "該電影已在收藏清單內！" });
+      }
+    },
+    [movies, favoriteList]
+  );
 
   //移除該movie從FavoriteList
-  const removeFromFavorite = (movieId: number) => {
+  const removeFromFavorite = useCallback((movieId: number) => {
     setFavoriteList((prev) => prev.filter((movie) => movie.id !== movieId));
     setAlert({ severity: "info", message: "已從收藏清單移除！" });
-  };
+  }, []);
 
   //關閉 Modal
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setModalOpen(false);
     setSelectedMovie(null);
-  };
+  }, []);
 
   // 初始獲取movie data
   useEffect(() => {
@@ -211,6 +240,8 @@ export const MovieProvider: React.FC<{ children: ReactNode }> = ({
         removeFromFavorite,
         alert,
         setAlert,
+        getGridTemplateColumns,
+        isSmallScreen,
       }}
     >
       {children}
