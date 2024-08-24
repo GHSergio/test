@@ -12,7 +12,9 @@ import {
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useMovie } from "../contexts/useMovie";
+import { useThemeContext } from "../contexts/useThemeContext";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/index";
 
 interface PosterCardProps {
   id: number;
@@ -29,8 +31,15 @@ const PosterCard: React.FC<PosterCardProps> = ({
   onMoreClick,
   onIconClick,
 }) => {
-  const { favoriteList, currentPage, isSmallScreen } = useMovie();
+  const { isSmallScreen } = useThemeContext();
   const theme = useTheme();
+  // 從Redux 提取 State
+  const favoriteList = useSelector(
+    (state: RootState) => state.movie.favoriteList
+  );
+  const currentPage = useSelector(
+    (state: RootState) => state.movie.currentPage
+  );
 
   // 是否在收藏內
   const isFavorite = useMemo(() => {

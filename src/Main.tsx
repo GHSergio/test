@@ -5,12 +5,14 @@ import Navbar from "./components/Navbar";
 import SearchBar from "./components/SearchBar";
 import MovieList from "./components/MovieList";
 import FavoriteList from "./components/FavoriteList";
-import { useMovie } from "./contexts/useMovie";
 import ScrollToTopButton from "./components/ScrollToTopButton";
+import { useSelector } from "react-redux";
+import { RootState } from "./store/index";
 
 const Main: React.FC = () => {
-  const { currentPage } = useMovie();
-
+  const currentPage = useSelector(
+    (state: RootState) => state.movie.currentPage
+  );
   return (
     <>
       <Grid container sx={{ paddingBottom: "15px" }}>

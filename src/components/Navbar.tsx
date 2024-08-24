@@ -17,16 +17,24 @@ import {
   Brightness4 as Brightness4Icon,
 } from "@mui/icons-material";
 import { useThemeContext } from "../contexts/useThemeContext";
-import { useMovie } from "../contexts/useMovie";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../store/index";
+import { setCurrentPage } from "../slice/movieSlice";
 
 const Navbar: React.FC = () => {
   // 使用自定義的主題上下文，獲取當前模式和切換主題的函數
-  const { mode, toggleTheme } = useThemeContext();
+  const { mode, toggleTheme, isSmallScreen } = useThemeContext();
 
   // 用於控制菜單打開的狀態
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const { setCurrentPage, currentPage, isSmallScreen } = useMovie();
+  // const { setCurrentPage, currentPage } = useMovie();
+  // 使用 Redux 的 useDispatch 來派發 action
+  const dispatch = useDispatch();
+  // 從 Redux 中獲取當前頁面狀態
+  const currentPage = useSelector(
+    (state: RootState) => state.movie.currentPage
+  );
   const theme = useTheme();
 
   const handleMenuOpen = useCallback(
@@ -41,14 +49,14 @@ const Navbar: React.FC = () => {
   }, []);
 
   const handleToggleToMovieList = useCallback(() => {
-    setCurrentPage("menu");
+    dispatch(setCurrentPage("menu"));
     setAnchorEl(null);
-  }, [setCurrentPage]);
+  }, [dispatch]);
 
   const handleToggleToFavoriteList = useCallback(() => {
-    setCurrentPage("favorite");
+    dispatch(setCurrentPage("favorite"));
     setAnchorEl(null);
-  }, [setCurrentPage]);
+  }, [dispatch]);
 
   return (
     <AppBar position="static">
@@ -181,7 +189,7 @@ const Navbar: React.FC = () => {
                     backgroundColor: theme.palette.custom.buttonHover,
                   },
                 }}
-                onClick={() => setCurrentPage("menu")}
+                onClick={() => dispatch(setCurrentPage("menu"))}
               >
                 Movie
               </Button>
@@ -212,7 +220,7 @@ const Navbar: React.FC = () => {
                   },
                   marginLeft: "5px",
                 }}
-                onClick={() => setCurrentPage("favorite")}
+                onClick={() => dispatch(setCurrentPage("favorite"))}
               >
                 Favorite
               </Button>

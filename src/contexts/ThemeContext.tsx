@@ -7,6 +7,7 @@ import React, {
   useCallback,
 } from "react";
 import { ThemeProvider } from "@mui/material/styles";
+import { useMediaQuery } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import { lightTheme, darkTheme } from "../components/Theme";
 // 規範 ThemeMode 只能是 light or dark
@@ -17,6 +18,12 @@ export interface ThemeContextProps {
   mode: ThemeMode;
   setMode: (mode: ThemeMode) => void;
   toggleTheme: () => void;
+  isSmallScreen: boolean;
+  isMediumScreen: boolean;
+  isLargeScreen: boolean;
+  isExtraLargeScreen: boolean;
+  moviesPerPage: number;
+  getGridTemplateColumns: () => string;
 }
 
 //創建context 並且 初始值為undefined
@@ -42,9 +49,53 @@ export const ThemeProviderComponent: React.FC<{ children: ReactNode }> = ({
     [mode]
   );
 
+  // 定義 breakpoint
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const isLargeScreen = useMediaQuery(theme.breakpoints.down("lg"));
+  const isExtraLargeScreen = useMediaQuery(theme.breakpoints.down("xl"));
+
+  // 計算每頁顯示的電影數量
+  const moviesPerPage = useMemo(() => {
+    if (isSmallScreen) return 4;
+    if (isMediumScreen) return 8;
+    if (isLargeScreen) return 12;
+    if (isExtraLargeScreen) return 16;
+    return 21;
+  }, [isSmallScreen, isMediumScreen, isLargeScreen, isExtraLargeScreen]);
+
+  // 計算 Grid 模板列樣式
+  const getGridTemplateColumns = useCallback(() => {
+    if (isSmallScreen) {
+      return "repeat(auto-fit, minmax(300px, 1fr))";
+    }
+    if (isMediumScreen) {
+      return "repeat(auto-fit, minmax(500px, 1fr))";
+    }
+    if (isLargeScreen) {
+      return "repeat(auto-fit, minmax(500px, 1fr))";
+    }
+    if (isExtraLargeScreen) {
+      return "repeat(auto-fit, minmax(600px, 1fr))";
+    }
+    return "repeat(auto-fit, minmax(800px, 1fr))";
+  }, [isSmallScreen, isMediumScreen, isLargeScreen, isExtraLargeScreen]);
+
   return (
     //提供 mode & toggleTheme
-    <ThemeContext.Provider value={{ mode, setMode, toggleTheme }}>
+    <ThemeContext.Provider
+      value={{
+        mode,
+        setMode,
+        toggleTheme,
+        isSmallScreen,
+        isMediumScreen,
+        isLargeScreen,
+        isExtraLargeScreen,
+        moviesPerPage,
+        getGridTemplateColumns,
+      }}
+    >
       <ThemeProvider theme={theme}>
         <CssBaseline />
         {children}

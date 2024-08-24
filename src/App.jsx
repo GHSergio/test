@@ -1,15 +1,17 @@
 //APP.tsx
 import React from "react";
 import { ThemeProviderComponent } from "./contexts/ThemeContext";
-import { MovieProvider } from "./contexts/MovieContext";
+import { Provider } from "react-redux";
+import store from "./store/index";
+
 import Main from "./Main";
 
 function App() {
   return (
     <ThemeProviderComponent>
-      <MovieProvider>
+      <Provider store={store}>
         <Main />
-      </MovieProvider>
+      </Provider>
     </ThemeProviderComponent>
   );
 }

@@ -2,19 +2,32 @@ import React from "react";
 import { Grid, TextField, IconButton, Tooltip } from "@mui/material";
 import ViewModuleIcon from "@mui/icons-material/ViewModule";
 import ViewListIcon from "@mui/icons-material/ViewList";
-import { useMovie } from "../contexts/useMovie";
+import { useThemeContext } from "../contexts/useThemeContext";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../store/index";
+import {
+  setViewMode,
+  setSearchKeyword,
+  setPaginationPage,
+} from "../slice/movieSlice";
 import { debounce } from "lodash";
 
 const SearchBar: React.FC = () => {
-  const {
-    viewMode,
-    setViewMode,
-    searchKeyword,
-    setSearchKeyword,
-    setPaginationPage,
-    isSmallScreen,
-  } = useMovie();
-
+  // const {
+  //   viewMode,
+  //   setViewMode,
+  //   searchKeyword,
+  //   setSearchKeyword,
+  //   setPaginationPage,
+  //   isSmallScreen,
+  // } = useMovie();
+  const dispatch = useDispatch();
+  const { isSmallScreen } = useThemeContext();
+  // 從 Redux 中獲取當前的 viewMode 和 searchKeyword
+  const viewMode = useSelector((state: RootState) => state.movie.viewMode);
+  const searchKeyword = useSelector(
+    (state: RootState) => state.movie.searchKeyword
+  );
   //減少頁碼更新的頻率
   const debouncedPageChange = debounce(() => {
     setPaginationPage(1);
@@ -23,7 +36,7 @@ const SearchBar: React.FC = () => {
   // 將 keyword 更新到 state
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
-    setSearchKeyword(value); // 立即更新搜尋關鍵字
+    dispatch(setSearchKeyword(value)); // 立即更新搜尋關鍵字
     debouncedPageChange(); // 延遲更新頁碼
   };
 
@@ -88,7 +101,7 @@ const SearchBar: React.FC = () => {
           }}
         >
           <IconButton
-            onClick={() => setViewMode?.("card")}
+            onClick={() => dispatch(setViewMode?.("card"))}
             color={viewMode === "card" ? "primary" : "default"}
           >
             <ViewModuleIcon />
@@ -108,7 +121,7 @@ const SearchBar: React.FC = () => {
           }}
         >
           <IconButton
-            onClick={() => setViewMode?.("list")}
+            onClick={() => dispatch(setViewMode?.("list"))}
             color={viewMode === "list" ? "primary" : "default"}
           >
             <ViewListIcon />

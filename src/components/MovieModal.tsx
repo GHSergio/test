@@ -5,12 +5,11 @@ import {
   Typography,
   Button,
   IconButton,
-  useTheme,
-  useMediaQuery,
   Tooltip,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useMovie } from "../contexts/useMovie";
+import { useThemeContext } from "../contexts/useThemeContext";
+import { POSTER_URL } from "../slice/movieSlice";
 
 interface MovieModalProps {
   open: boolean;
@@ -28,22 +27,15 @@ const MovieModal: React.FC<MovieModalProps> = ({
   handleClose,
   movie,
 }) => {
-  const { POSTER_URL } = useMovie();
+  const { isSmallScreen } = useThemeContext();
   const movieImage = `${POSTER_URL}${movie.image}`;
-  const theme = useTheme();
-
-  //寬度600以下
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  //寬度600~1280
-  const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "xl"));
 
   const modalStyle = {
     position: "absolute",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    // "600以下"  85% : "600~1280"  65% : 其他(1280以上) 50%
-    width: isSmallScreen ? "85%" : isMediumScreen ? "65%" : "50%",
+    width: isSmallScreen ? "85%" : "65%",
     bgcolor: "background.paper",
     boxShadow: 24,
     p: 3,
